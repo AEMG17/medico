@@ -1,0 +1,80 @@
+﻿@page "/registrarpaciente"
+@using Medico.Components.Layout
+@using Medico.Models
+@using Medico.Services
+@rendermode InteractiveServer
+
+@inject IPaciente pacienteService
+
+
+@if (guardado)
+{
+    <Guardado />
+}
+@if (noguardado)
+{
+    <NoGuardado />
+}
+
+<EditForm Model="paciente" OnValidSubmit="RegistrarPacienteMethod">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="card" style="width:75%; margin:auto">
+        <div class="card-header">
+            Registrar Paciente
+        </div>
+        <div class="card-body" style="text-align:center">
+            <div class="row" style="width:auto">
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="Nombre (s)" @bind="paciente.Nombre" />
+                </div>
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="Primer Apellido" @bind="paciente.PrimerApellido" />
+                </div>
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="Segundo Apellido" @bind="paciente.SegundoApellido" />
+                </div>
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="CURP" @bind="paciente.CURP" maxlength="18" />
+                </div>
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="Tipo Sanguíneo" @bind="paciente.TipoSangre" />
+                </div>
+                <div class="col-4" style="margin-bottom:2em">
+                    <input type="text" class="form-control" placeholder="Observaciones" @bind="paciente.Observaciones" />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+            </div>
+        
+        </div>
+
+    </div>
+
+
+</EditForm>
+<ListaPacientes />
+
+@code {
+    Paciente paciente = new Paciente();
+    private bool guardado, noguardado;
+
+    async Task RegistrarPacienteMethod()
+    {
+        var respuesta = await pacienteService.RegistrarPaciente(paciente);
+        if(respuesta.Id > 0)
+        {
+            noguardado = false;
+            guardado = true;
+            StateHasChanged();
+        }
+        else
+        {
+            guardado = false;
+            noguardado = true;
+            StateHasChanged();
+        }
+    }
+
+}
